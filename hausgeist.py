@@ -240,14 +240,15 @@ async def vote_end_voting(channel):
 
 
 async def vote_interim_voting(channel):
-    """ End a currently open voting """
+    """ post interim result for currently open voting """
 
-    global vote_interim_task
+    global vote_interim_task, vote_end_task
 
     await asyncio.sleep(VOTE_DELAY_INTERIM)
     if not vote_end_task.done() and len(votes) >= VOTE_MIN_VOTES:
         await notify_vote_result(channel)
         vote_interim_task = asyncio.create_task(vote_interim_voting(bot.get_channel(CHANNEL)))
+        vote_end_task.set_name(int(time.time()))
 
 
 async def pipi_block_notification():
